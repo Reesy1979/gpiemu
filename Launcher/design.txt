@@ -1,0 +1,48 @@
+Instead of big config file, just config ui using folders and files
+
+launcher\    Main folder to hold everything
+	Skins\
+		Sub folders will be the skins available
+	Sections\
+        	01_Emulators\      - icon for section will be skins/<skin name>/sections/emulators.png  (32x32 in size )
+			01_drgb.txt
+				File content
+					title=DrGB
+					icon=skin:icons/drgb.png  ( icons are 32x32 pixels )
+					exec=/drgb.img
+		Games\
+		Apps\
+        
+Transverse the section folders
+Build up top nav bar like gmenu2X - L and R will navigate sections - bit awkward on GPI - maybe allow navigate using buttons as well
+                                    or maybe X and Y instead?
+
+Then on the selected section
+   transverse the items sub folders
+   get total number of items
+   allocate memory to hold details
+   read details into memory
+       ie load PNG into memory
+          get icon name etc
+   Render to screen
+   Selected item will be high lighted - maybe have a red box around it rather than making it brighter
+   up/down/left right will change selected item
+   if you reach top of items, nav will move into section bar at the top - sections can then be navigate - press button to select new section etc
+   
+   if more items available than can be displayed then when you press down on last visible row icons, all icons will scroll up - instant scroll or animated..not sure.
+   
+   Thats it - easy.
+   
+   Can't get battery life, so can't add that
+   Can't change CPU speed, so can't add that
+   
+   Just want it to look like gmenu2x but not need fucking SDL!!!!
+   
+   Item file content
+	title=eBook
+	icon=skin:icons/ebook.png
+	exec=/usr/gp2x/gp2xmenu
+	params=--disable-autorun --enable-terminate --view-ebook
+	clock=75
+	wrapper=true
+   

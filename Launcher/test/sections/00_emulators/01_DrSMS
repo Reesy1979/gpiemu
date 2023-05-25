@@ -1,0 +1,4 @@
+title=DrSMS
+description=SMS and GG emulator
+icon=skin:icons/sms.png
+exec=/drsms/drsms.img

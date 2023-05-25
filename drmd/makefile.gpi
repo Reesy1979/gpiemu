@@ -1,0 +1,85 @@
+
+CIRCLEHOME = /home/dave/Documents/projects/circle-stdlib/libs/circle
+CIRCLE_STDLIB = /home/dave/Documents/projects/circle-stdlib/install/arm-none-circle
+
+PREFIX = /home/dave/Toolchain/gcc-arm-10.3-2021.07-x86_64-arm-none-eabi/bin/arm-none-eabi-
+
+TARGET=drmd
+
+APP_FILE    = drmd
+APP_VERSION = 1.0.0
+APP_NAME    = MD emulator
+APP_TYPES   = SMC
+
+# If you have any directories with include files, add them here with -I on
+# the front of each
+
+TOOLCHAIN_INC = -I $(CIRCLE_STDLIB)/include \
+                -I /home/dave/Documents/projects/circle-stdlib/include
+
+PLATFORM = platform.gpi
+                
+# Platform sources
+PLATFORM_SRC  = ../platform/$(PLATFORM) \
+               	../platform/components \
+            	../platform/components/zip \
+            	../platform
+
+# Platform includes
+PLATFORM_INC  = -I ../platform/$(PLATFORM) \
+            	-I ../platform/components \
+            	-I ../platform/components/zip \
+            	-I ../platform
+
+# Emulator sources
+EMULATOR_SRC  = ./drmd/drmd \
+		./drmd/320x240 \
+		./drmd/cyclone \
+		./drmd/drz80 \
+            	./emulator 
+
+# Emulator includes
+EMULATOR_INC  = -I ./drmd/drmd \
+            	-I ./drmd/cyclone \
+            	-I ./drmd/drz80 \
+            	-I ./emulator 
+            	
+SOURCE    = $(PLATFORM_SRC) $(EMULATOR_SRC)
+INCLUDE   = $(TOOLCHAIN_INC) $(PLATFORM_INC) $(EMULATOR_INC)
+
+DEFINE   = -D_GPI -D_NEED_TRANSPOSE
+DEFINE  += -DEMU_DISPLAY_NAME="\"$(APP_NAME)\"" -DEMU_VERSION="\"$(APP_VERSION)\"" -DEMU_FILE_NAME="\"$(APP_FILE)\"" -DEMU_FILE_TYPES="\"$(APP_TYPES)\""
+DEFINE  += -DEMU_SYS_PATH="\"/drmd\"" -DEMU_ROM_PATH="\"/roms/md\"" 
+DEFINE  += -DDISABLE_CHEATING -DDISABLE_IPS_PATCHING
+
+SRC_CPP = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.cpp))
+SRC_C   = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.c))
+SRC_S   = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.s))
+OBJ_CPP = $(patsubst %.cpp, %.o, $(SRC_CPP))
+OBJ_C   = $(patsubst %.c, %.o, $(SRC_C))
+OBJ_S   = $(patsubst %.s, %.o, $(SRC_S))
+OBJS    = $(OBJ_CPP) $(OBJ_C) $(OBJ_S)	
+EXTRACLEAN = $(OBJS)
+LIBS	=  $(CIRCLE_STDLIB)/lib/libm.a \
+           $(CIRCLE_STDLIB)/lib/libc.a \
+           $(CIRCLE_STDLIB)/lib/libz.a \
+           $(CIRCLE_STDLIB)/lib/libpng.a \
+           $(CIRCLEHOME)/lib/libcircle.a \
+           $(CIRCLE_STDLIB)/lib/libcirclenewlib.a \
+           $(CIRCLEHOME)/addon/fatfs/libfatfs.a \
+           $(CIRCLEHOME)/lib/usb/libusb.a \
+           $(CIRCLEHOME)/lib/input/libinput.a \
+           $(CIRCLEHOME)/lib/sched/libsched.a \
+           $(CIRCLEHOME)/addon/SDCard/libsdcard.a \
+           $(CIRCLEHOME)/lib/fs/libfs.a \
+           $(CIRCLEHOME)/lib/sound/libsound.a
+
+include $(CIRCLEHOME)/Rules.mk		
+
+%.o: %.s
+	@echo "  AS    $@"
+	@$(AS) $(AFLAGS) -c -o $@ $<
+
+%.d: %.s
+	@$(AS) $(AFLAGS) -M -MG -MT $*.o -MT $@ -MF $@ $<
+

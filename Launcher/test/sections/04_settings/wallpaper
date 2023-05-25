@@ -1,0 +1,4 @@
+title=Wallpaper
+description=Configure options from the original frontend
+icon=skin:icons/wallpaper.png
+exec=#wallpaper

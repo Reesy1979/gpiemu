@@ -1,0 +1,106 @@
+PLATFORM = platform.gp2x
+
+# Define the applications properties here:
+
+APP_FILE    = DingooSMS
+APP_VERSION = 1.4
+APP_NAME    = Dingoo SMS/GG/COLECO emulator
+APP_TYPES   = SMS|GG|SG|COL|ROM
+
+# Define the compiler settings here:
+TOOLCHAIN = /opt/open2x/gcc-4.1.1-glibc-2.3.6
+
+CPP       = $(TOOLCHAIN)/bin/arm-open2x-linux-g++.exe
+CC        = $(TOOLCHAIN)/bin/arm-open2x-linux-gcc.exe
+LD        = $(TOOLCHAIN)/bin/arm-open2x-linux-ld.exe
+
+# Toolchain includes
+TOOLCHAIN_INC = -I $(TOOLCHAIN)/include \
+                -I $(TOOLCHAIN)/include/zlib \
+
+# Platform sources
+PLATFORM_SRC  = ../platform/$(PLATFORM) \
+               	../platform/components \
+            	../platform/components/zip \
+            	../platform
+
+# Platform includes
+PLATFORM_INC  = -I ../platform/$(PLATFORM) \
+            	-I ../platform/components \
+            	-I ../platform/components/zip \
+            	-I ../platform
+
+# Emulator sources
+EMULATOR_SRC  = ./smsplus \
+            	./smsplus/cpu \
+            	./smsplus/sound \
+            	./emulator
+
+# Emulator includes
+EMULATOR_INC  = -I ./smsplus \
+            	-I ./smsplus/cpu \
+            	-I ./smsplus/sound \
+            	-I ./resources \
+            	-I ./emulator
+
+# Compilator and linker flags
+SOURCE    = $(PLATFORM_SRC) $(EMULATOR_SRC)
+INCLUDE   = $(TOOLCHAIN_INC) $(PLATFORM_INC) $(EMULATOR_INC)
+
+OPTIMIZE  = -g -O3
+OPTIMIZE += -ffast-math
+OPTIMIZE += -fsingle-precision-constant
+OPTIMIZE += -fno-strength-reduce
+OPTIMIZE += -funroll-loops
+OPTIMIZE += -fno-builtin
+
+#OPTIMIZE  = -O3 -funroll-all-loops
+
+DEFINES   = -DEMU_DISPLAY_NAME="\"$(APP_NAME)\"" -DEMU_VERSION="\"$(APP_VERSION)\"" -DEMU_FILE_NAME="\"$(APP_FILE)\"" -DEMU_FILE_TYPES="\"$(APP_TYPES)\""
+DEFINES  += -DLSB_FIRST
+DEFINES  += -DDISABLE_CHEATING -DDISABLE_IPS_PATCHING
+
+CC_OPTS   = -c -Wall -Wextra $(OPTIMIZE) -msoft-float $(INCLUDE) $(DEFINES)
+CC_OPTS_A = $(CC_OPTS) -D_ASSEMBLER_
+CPP_OPTS  = $(CC_OPTS) -fno-rtti -fno-exceptions -fno-threadsafe-statics
+
+LIB_PATH  = $(TOOLCHAIN)/lib
+LIBS      = -lpng -lz -lc -lm -lgcc -lstdc++
+
+LD_SCRIPT = $(DINGOO_SDK)/lib/dingoo.xn
+LD_OPTS   = -nodefaultlibs --script $(LD_SCRIPT) -L$(LIB_PATH) $(LIBS) -o $(APP_FILE).elf
+
+# Find all source files
+
+SRC_CPP = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.cpp))
+SRC_C   = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.c))
+SRC_S   = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.S))
+OBJ_CPP = $(patsubst %.cpp, %.o, $(SRC_CPP))
+OBJ_C   = $(patsubst %.c, %.o, $(SRC_C))
+OBJ_S   = $(patsubst %.S, %.o, $(SRC_S))
+OBJ     = $(OBJ_CPP) $(OBJ_C) $(OBJ_S)
+
+# Compile rules.
+
+.PHONY : all
+
+all : $(APP_FILE).gpe
+
+$(APP_FILE).gpe : $(OBJ)
+	$(CC) $(OBJ) $(LD_OPTS) -o $@
+
+$(OBJ_CPP) : %.o : %.cpp
+	$(CPP) $(CPP_OPTS) -o $@ $<
+
+$(OBJ_C) : %.o : %.c
+	$(CC) $(CC_OPTS) -o $@ $<
+
+$(OBJ_S) : %.o : %.S
+	$(CC) $(CC_OPTS_A) -o $@ $<
+
+# Clean rules
+
+.PHONY : clean
+
+clean :
+	rm -f $(OBJ) $(APP_FILE).elf $(APP_FILE).bin $(APP_FILE).app $(APP_FILE).sim
