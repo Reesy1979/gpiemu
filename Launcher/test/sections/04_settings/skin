@@ -1,0 +1,4 @@
+title=Skin
+description=Configure skin
+icon=skin:icons/skin.png
+exec=#skin

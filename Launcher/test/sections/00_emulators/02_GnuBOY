@@ -1,0 +1,4 @@
+title=GnuBOY
+description=GB emulator
+icon=skin:icons/GBPocket_Gray2.png
+exec=/gnuboy/gnuboy.img

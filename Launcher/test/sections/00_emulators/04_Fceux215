@@ -1,0 +1,4 @@
+title=Fceux215
+description=NES emulator
+icon=skin:icons/Nes.png
+exec=/Fceux215/Fceux215.img

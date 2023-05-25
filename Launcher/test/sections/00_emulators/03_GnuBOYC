@@ -1,0 +1,4 @@
+title=GnuBOYC
+description=GBC emulator
+icon=skin:icons/GBC_Purple.png
+exec=/gnuboy/gnuboyc.img

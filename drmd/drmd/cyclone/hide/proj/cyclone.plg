@@ -1,0 +1,53 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: cyclone - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\Dave\LOCALS~1\Temp\RSP42.tmp" with contents
+[
+/nologo /MLd /W4 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Fp"Debug/cyclone.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\Documents and Settings\Dave\My Documents\Projects\Cyclone\disa\Disa.c"
+"C:\Documents and Settings\Dave\My Documents\Projects\Cyclone\Ea.cpp"
+"C:\Documents and Settings\Dave\My Documents\Projects\Cyclone\Main.cpp"
+"C:\Documents and Settings\Dave\My Documents\Projects\Cyclone\OpAny.cpp"
+"C:\Documents and Settings\Dave\My Documents\Projects\Cyclone\OpArith.cpp"
+"C:\Documents and Settings\Dave\My Documents\Projects\Cyclone\OpBranch.cpp"
+"C:\Documents and Settings\Dave\My Documents\Projects\Cyclone\OpLogic.cpp"
+"C:\Documents and Settings\Dave\My Documents\Projects\Cyclone\OpMove.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\Dave\LOCALS~1\Temp\RSP42.tmp" 
+Creating temporary file "C:\DOCUME~1\Dave\LOCALS~1\Temp\RSP43.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/cyclone.pdb" /debug /machine:I386 /out:"cyclone.exe" /pdbtype:sept 
+".\Debug\Disa.obj"
+".\Debug\Ea.obj"
+".\Debug\Main.obj"
+".\Debug\OpAny.obj"
+".\Debug\OpArith.obj"
+".\Debug\OpBranch.obj"
+".\Debug\OpLogic.obj"
+".\Debug\OpMove.obj"
+]
+Creating command line "link.exe @C:\DOCUME~1\Dave\LOCALS~1\Temp\RSP43.tmp"
+<h3>Output Window</h3>
+Compiling...
+Disa.c
+Ea.cpp
+Main.cpp
+OpAny.cpp
+OpArith.cpp
+OpBranch.cpp
+OpLogic.cpp
+OpMove.cpp
+Linking...
+
+
+
+<h3>Results</h3>
+cyclone.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

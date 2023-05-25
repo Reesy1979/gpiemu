@@ -1,0 +1,9 @@
+..\..\..\sdk_unstable\tools\bin2h\bin2h.exe font.png png_font
+..\..\..\sdk_unstable\tools\bin2h\bin2h.exe tile.png png_tile
+..\..\..\sdk_unstable\tools\bin2h\bin2h.exe logo_sms.png png_logo_sms
+..\..\..\sdk_unstable\tools\bin2h\bin2h.exe logo_gg.png png_logo_gg
+..\..\..\sdk_unstable\tools\bin2h\bin2h.exe logo_coleco.png png_logo_coleco
+..\..\..\sdk_unstable\tools\bin2h\bin2h.exe gamepad_sms.png png_gamepad_sms
+..\..\..\sdk_unstable\tools\bin2h\bin2h.exe gamepad_gg.png png_gamepad_gg
+..\..\..\sdk_unstable\tools\bin2h\bin2h.exe gamepad_coleco.png png_gamepad_coleco
+..\..\..\sdk_unstable\tools\bin2h\bin2h.exe backdrop.png png_backdrop
