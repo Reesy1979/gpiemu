@@ -1,0 +1,114 @@
+PLATFORM    = platform.vita
+TOOLCHAIN   = /usr/local/vitasdk
+TOOLS       = $(TOOLCHAIN)/bin/arm-vita-eabi
+
+# Define the applications properties here:
+
+APP_FILE    = DingooSNES
+APP_VERSION = 1.6
+APP_NAME    = Dingoo SNES emulator
+APP_TYPES   = SFC|SMC
+TITLE_ID = DREE00002
+
+# Define the compiler settings here:
+
+CPP = $(TOOLS)-g++
+CC  = $(TOOLS)-gcc
+LD  = $(TOOLS)-g++
+
+
+# Toolchain includes
+TOOLCHAIN_INC = -I $(TOOLCHAIN)/arm-vita-eabi/include 
+
+# Platform sources
+PLATFORM_SRC  = ../platform/$(PLATFORM) \
+               	../platform/components \
+            	../platform/components/zip \
+            	../platform
+
+# Platform includes
+PLATFORM_INC  = -I ../platform/$(PLATFORM) \
+            	-I ../platform/components \
+            	-I ../platform/components/zip \
+            	-I ../platform
+
+# Emulator sources
+EMULATOR_SRC  = ./snes9x139 \
+            	./emulator
+
+# Emulator includes
+EMULATOR_INC  = -I ./snes9x139 \
+            	-I ./snes9x139/include \
+            	-I ./resources \
+            	-I ./emulator
+
+# Compilator and linker flags
+SOURCE    = $(PLATFORM_SRC) $(EMULATOR_SRC)
+INCLUDE   = $(TOOLCHAIN_INC) $(PLATFORM_INC) $(EMULATOR_INC)
+
+#OPTIMIZE  = -O3 -marm -mno-thumb-interwork -fomit-frame-pointer -fno-pic
+#OPTIMIZE += -ffast-math
+#OPTIMIZE += -fsingle-precision-constant
+#OPTIMIZE += -fno-strength-reduce
+#OPTIMIZE += -mbranch-likely
+#OPTIMIZE += -funroll-loops
+#OPTIMIZE += -fno-builtin
+
+OPTIMIZE  = -O3
+
+DEFINES   = -D_VITA
+DEFINES  += -DEMU_DISPLAY_NAME="\"$(APP_NAME)\"" -DEMU_VERSION="\"$(APP_VERSION)\"" -DEMU_FILE_NAME="\"$(APP_FILE)\"" -DEMU_FILE_TYPES="\"$(APP_TYPES)\""
+DEFINES  += -DVER=139 -DSysDDec=float
+
+CC_OPTS   = -Wl,-q -Wall -Wextra -marm -mno-thumb-interwork -fomit-frame-pointer -fno-pic $(OPTIMIZE) $(INCLUDE) $(DEFINES)
+CC_OPTS_A = $(CC_OPTS) -D_ASSEMBLER_
+CPP_OPTS  = $(CC_OPTS) -fno-rtti -fno-exceptions -fno-threadsafe-statics
+
+LIB_PATH  = $(TOOLCHAIN)/arm-vita-eabi/lib
+LIBS      = -lvita2d -lSceDisplay_stub -lSceGxm_stub \
+	-lSceSysmodule_stub -lSceCtrl_stub -lScePgf_stub -lScePvf_stub \
+	-lSceCommonDialog_stub -lSceAudio_stub -lfreetype -lpng -ljpeg -lz -lm -lc -lstdc++
+
+# Find all source files
+
+SRC_CPP = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.cpp))
+SRC_C   = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.c))
+SRC_S   = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.S))
+OBJ_CPP = $(patsubst %.cpp, %.o, $(SRC_CPP))
+OBJ_C   = $(patsubst %.c, %.o, $(SRC_C))
+OBJ_S   = $(patsubst %.S, %.o, $(SRC_S))
+OBJ     = $(OBJ_CPP) $(OBJ_C) $(OBJ_S)
+
+# Compile rules.
+
+all: $(APP_FILE).vpk
+
+%.vpk: eboot.bin
+	vita-mksfoex -s TITLE_ID=$(TITLE_ID) "$(APP_FILE)" param.sfo
+	vita-pack-vpk -s param.sfo -b eboot.bin \
+	       $@
+
+eboot.bin: $(APP_FILE).velf
+	vita-make-fself -s $< $@
+
+%.velf: %.elf
+	vita-elf-create $< $@
+
+$(APP_FILE).elf: $(OBJ)
+	$(CC) $(CC_OPTS) $^ $(LIBS) -o $@
+
+$(OBJ_CPP) : %.o : %.cpp
+	$(CPP) $(CPP_OPTS) -c $< -o $@
+
+$(OBJ_C) : %.o : %.c
+	$(CC) $(CC_OPTS) -c $< -o $@
+
+$(OBJ_S) : %.o : %.S
+	$(CC) $(CC_OPTS_A) -c $< -o $@
+
+# Clean rules
+
+.PHONY : clean
+
+clean :
+	rm -f $(OBJ) $(APP_FILE).velf eboot.bin $(APP_FILE).vpk

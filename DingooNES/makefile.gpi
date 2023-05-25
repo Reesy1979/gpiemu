@@ -1,0 +1,95 @@
+
+CIRCLEHOME = /home/dave/Documents/projects/circle-stdlib/libs/circle
+CIRCLE_STDLIB = /home/dave/Documents/projects/circle-stdlib/install/arm-none-circle
+
+PREFIX = /home/dave/Toolchain/gcc-arm-10.3-2021.07-x86_64-arm-none-eabi/bin/arm-none-eabi-
+
+TARGET=Fceux215
+
+APP_FILE    = Fceux215
+APP_VERSION = 1.7
+APP_NAME    = NES emulator
+APP_TYPES   = NES|FDS
+
+# If you have any directories with include files, add them here with -I on
+# the front of each
+
+TOOLCHAIN_INC = -I $(CIRCLE_STDLIB)/include \
+                -I /home/dave/Documents/projects/circle-stdlib/include
+
+PLATFORM = platform.gpi
+                
+# Platform sources
+PLATFORM_SRC  = ../platform/$(PLATFORM) \
+               	../platform/components \
+            	../platform/components/zip \
+            	../platform
+
+# Platform includes
+PLATFORM_INC  = -I ../platform/$(PLATFORM) \
+            	-I ../platform/components \
+            	-I ../platform/components/zip \
+            	-I ../platform
+
+# Emulator sources
+EMULATOR_SRC  = ./fceux215 \
+            	./fceux215/boards \
+            	./fceux215/input \
+            	./fceux215/mappers \
+            	./fceux215/utils \
+            	./emulator
+
+# Emulator includes
+EMULATOR_INC  = -I ./fceux215 \
+            	-I ./fceux215/boards \
+            	-I ./fceux215/input \
+            	-I ./fceux215/mappers \
+            	-I ./fceux215/utils \
+            	-I ./resources \
+            	-I ./emulator
+            	
+SOURCE    = $(PLATFORM_SRC) $(EMULATOR_SRC)
+INCLUDE   = $(TOOLCHAIN_INC) $(PLATFORM_INC) $(EMULATOR_INC)
+
+DEFINE   = -D_GPI -DNDEBUG -DINDEXED_IMAGE
+DEFINE  += -DEMU_DISPLAY_NAME="\"$(APP_NAME)\"" -DEMU_VERSION="\"$(APP_VERSION)\"" -DEMU_FILE_NAME="\"$(APP_FILE)\"" -DEMU_FILE_TYPES="\"$(APP_TYPES)\""
+DEFINE  += -DEMU_SYS_PATH="\"/Fceux215\"" -DEMU_ROM_PATH="\"/roms/nes\"" 
+DEFINE  += -DHAVE_ASPRINTF -DPSS_STYLE=2 -DLSB_FIRST -D_NEED_TRANSPOSE
+
+SRC_CPP = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.cpp))
+SRC_C   = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.c))
+SRC_S   = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.s))
+OBJ_CPP = $(patsubst %.cpp, %.o, $(SRC_CPP))
+OBJ_C   = $(patsubst %.c, %.o, $(SRC_C))
+OBJ_S   = $(patsubst %.s, %.o, $(SRC_S))
+OBJS    = $(OBJ_CPP) $(OBJ_C) $(OBJ_S)	
+EXTRACLEAN = $(OBJS)
+LIBS	=  $(CIRCLE_STDLIB)/lib/libm.a \
+           $(CIRCLE_STDLIB)/lib/libc.a \
+           $(CIRCLE_STDLIB)/lib/libz.a \
+           $(CIRCLE_STDLIB)/lib/libpng.a \
+           $(CIRCLEHOME)/lib/libcircle.a \
+           $(CIRCLE_STDLIB)/lib/libcirclenewlib.a \
+           $(CIRCLEHOME)/addon/fatfs/libfatfs.a \
+           $(CIRCLEHOME)/lib/usb/libusb.a \
+           $(CIRCLEHOME)/lib/input/libinput.a \
+           $(CIRCLEHOME)/lib/sched/libsched.a \
+           $(CIRCLEHOME)/addon/SDCard/libsdcard.a \
+           $(CIRCLEHOME)/lib/fs/libfs.a \
+           $(CIRCLEHOME)/lib/sound/libsound.a \
+           $(CIRCLEHOME)/addon/vc4/interface/bcm_host/libbcm_host.a \
+	  $(CIRCLEHOME)/addon/vc4/interface/khronos/libkhrn_client.a \
+	  $(CIRCLEHOME)/addon/vc4/interface/vmcs_host/libvmcs_host.a \
+	  $(CIRCLEHOME)/addon/vc4/interface/vcos/libvcos.a \
+	  $(CIRCLEHOME)/addon/vc4/vchiq/libvchiq.a \
+	  $(CIRCLEHOME)/addon/linux/liblinuxemu.a
+
+include $(CIRCLEHOME)/Rules.mk		
+
+%.o: %.s
+	@echo "  AS    $@"
+	@$(AS) $(AFLAGS) -c -o $@ $<
+
+%.d: %.s
+	@$(AS) $(AFLAGS) -M -MG -MT $*.o -MT $@ -MF $@ $<
+
