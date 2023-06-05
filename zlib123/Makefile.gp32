@@ -1,0 +1,56 @@
+###############################################################################
+# Makefile for a GP32 application.
+###############################################################################
+
+# Change the line below to the name of your program
+PROGRAM =    libz
+
+# If you have any directories with include files, add them here with -I on
+# the front of each
+INCLUDES = -I . 
+
+# list all .c files here
+CFILES	=	adler32.c compress.c crc32.c gzio.c uncompr.c deflate.c trees.c \
+       zutil.c inflate.c infback.c inftrees.c inffast.c  
+
+SFILES = 	
+
+##############################################################################
+# You shouldn't need to change anything below here, really
+##############################################################################
+
+TOOLCHAIN = /usr/devkitarm
+
+
+ALL_INCLUDES = -I$(TOOLCHAIN)/include $(INCLUDES)
+ALL_LIBS = -L$(TOOLCHAIN)/lib $(LIBS)
+
+CFLAGS     =  -c -march=armv4t -marm -mthumb-interwork -msoft-float \
+					-ffast-math -fshort-enums -nostdlib -fno-common -ffreestanding \
+					-fno-builtin -fno-exceptions -mstructure-size-boundary=8 -O3 \
+					-fomit-frame-pointer -Wall
+
+LDFLAGS = 
+
+OFILES  =       $(SFILES:.s=.o) $(CFILES:.c=.o)
+
+AR = $(TOOLCHAIN)/bin/arm-elf-ar rcs
+CC = $(TOOLCHAIN)/bin/arm-elf-gcc
+STRIP = $(TOOLCHAIN)/bin/arm-elf-strip
+
+all:		$(PROGRAM).a
+
+clean:
+	-rm -f $(OFILES) $(MAPFILE) $(PROGRAM)
+
+.PHONY: all clean
+
+%.o:	%.c
+	$(CC) $(ALL_INCLUDES) $(CFLAGS) -c $< -o $@
+
+%.o:	%.s
+	$(CC) $(ALL_INCLUDES) $(CFLAGS) -c $< -o $@
+
+$(PROGRAM).a: $(OFILES)
+	$(AR) $@ $(OFILES)
+
