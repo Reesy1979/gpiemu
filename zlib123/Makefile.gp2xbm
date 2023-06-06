@@ -1,0 +1,34 @@
+TOOLCHAIN = /opt/arm-dev
+
+COPT = -I$(TOOLCHAIN)/arm-none-eabi/include -I . -c -march=armv4t -marm -mno-thumb-interwork \
+					-ffast-math -fshort-enums -nostdlib -fno-common -ffreestanding \
+					-fno-builtin -fno-exceptions -mstructure-size-boundary=32 -O3 \
+					-fomit-frame-pointer -Wall -finline-limit=500 \
+					-D__GP2XBM__
+		
+		
+GCC = $(TOOLCHAIN)/bin/arm-none-eabi-gcc
+AR=$(TOOLCHAIN)/bin/arm-none-eabi-ar rc
+STRIP = $(TOOLCHAIN)/bin/arm-none-eabi-strip
+
+OBJS = adler32.o compress.o crc32.o gzio.o uncompr.o deflate.o trees.o \
+       zutil.o inflate.o infback.o inftrees.o inffast.o
+
+APPNAME = libz
+
+PRELIBS = -L $(TOOLCHAIN)/arm-none-eabi/lib -L $(TOOLCHAIN)/lib/gcc/arm-none-eabi/6.2.0 $(LIBS) 
+
+all: $(APPNAME).a
+clean: tidy $(APPNAME).a
+
+$(APPNAME).a: $(OBJS) $(OBJA)
+	$(AR) $@ $(OBJS) $(OBJA)
+	
+.c.o:
+	$(GCC) $(COPT) -c $< -o $@
+
+.cpp.o:
+	$(GCC) $(COPT) -c $< -o $@
+
+tidy:
+	rm *.o

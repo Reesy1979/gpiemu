@@ -20,7 +20,7 @@
 #ifndef _kernel_h
 #define _kernel_h
 
-#include <circle_stdlib_app.h>
+#include "gpi_circle_stdlib_app.h"
 
 #include <string.h>
 #include <circle/usb/usbgamepad.h>

@@ -1,0 +1,33 @@
+TOOLCHAIN = /opt/open2x/gcc-4.1.1-glibc-2.3.6
+
+COPT = -I$(TOOLCHAIN)/arm-open2x-linux/include -I . -mcpu=arm920 \
+		-mtune=arm920t -O2 -msoft-float -ffast-math -fstrict-aliasing -mstructure-size-boundary=8 \
+		-fexpensive-optimizations -fweb -frename-registers -fomit-frame-pointer -falign-functions -finline -finline-functions \
+		-fno-builtin -fno-common -D__GIZ__
+		
+		
+GCC = $(TOOLCHAIN)/bin/arm-open2x-linux-gcc
+AR=$(TOOLCHAIN)/bin/arm-open2x-linux-ar rc
+STRIP = $(TOOLCHAIN)/bin/arm-open2x-linux-strip
+
+OBJS = adler32.o compress.o crc32.o gzio.o uncompr.o deflate.o trees.o \
+       zutil.o inflate.o infback.o inftrees.o inffast.o
+
+APPNAME = libz
+
+PRELIBS = -L$(TOOLCHAIN)/arm-open2x-linux/lib $(LIBS) 
+
+all: $(APPNAME).a
+clean: tidy $(APPNAME).a
+
+$(APPNAME).a: $(OBJS) $(OBJA)
+	$(AR) $@ $(OBJS) $(OBJA)
+	
+.c.o:
+	$(GCC) $(COPT) -c $< -o $@
+
+.cpp.o:
+	$(GCC) $(COPT) -c $< -o $@
+
+tidy:
+	rm *.o
