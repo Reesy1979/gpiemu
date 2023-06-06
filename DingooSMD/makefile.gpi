@@ -1,8 +1,5 @@
 
-CIRCLEHOME = /home/dave/Documents/projects/circle-stdlib/libs/circle
-CIRCLE_STDLIB = /home/dave/Documents/projects/circle-stdlib/install/arm-none-circle
-
-PREFIX = /home/dave/Toolchain/gcc-arm-10.3-2021.07-x86_64-arm-none-eabi/bin/arm-none-eabi-
+CIRCLEHOME = $(CIRCLE_STDLIB)/libs/circle
 
 TARGET=Picodrive
 
@@ -14,8 +11,8 @@ APP_TYPES   = SMD|GEN|BIN|ISO
 # If you have any directories with include files, add them here with -I on
 # the front of each
 
-TOOLCHAIN_INC = -I $(CIRCLE_STDLIB)/include \
-                -I /home/dave/Documents/projects/circle-stdlib/include
+TOOLCHAIN_INC = -I $(CIRCLE_STDLIB)/install/arm-none-circle/include \
+		-I $(CIRCLE_STDLIB)/include
 
 PLATFORM = platform.gpi
                 
@@ -55,6 +52,7 @@ INCLUDE   = $(TOOLCHAIN_INC) $(PLATFORM_INC) $(EMULATOR_INC)
 
 DEFINE   = -D_GPI -DNDEBUG
 DEFINE  += -DEMU_DISPLAY_NAME="\"$(APP_NAME)\"" -DEMU_VERSION="\"$(APP_VERSION)\"" -DEMU_FILE_NAME="\"$(APP_FILE)\"" -DEMU_FILE_TYPES="\"$(APP_TYPES)\""
+DEFINE  += -DEMU_SYS_PATH="\"/drmd\"" -DEMU_ROM_PATH="\"/roms/md\"" 
 DEFINE  += -DEMU_F68K -D_USE_CZ80
 
 SRC_CPP = $(foreach dir, $(SOURCE), $(wildcard $(dir)/*.cpp))
@@ -65,25 +63,19 @@ OBJ_C   = $(patsubst %.c, %.o, $(SRC_C))
 OBJ_S   = $(patsubst %.s, %.o, $(SRC_S))
 OBJS    = $(OBJ_CPP) $(OBJ_C) $(OBJ_S)	
 EXTRACLEAN = $(OBJS)
-LIBS	=  $(CIRCLE_STDLIB)/lib/libm.a \
-           $(CIRCLE_STDLIB)/lib/libc.a \
-           $(CIRCLE_STDLIB)/lib/libz.a \
-           $(CIRCLE_STDLIB)/lib/libpng.a \
-           $(CIRCLEHOME)/lib/libcircle.a \
-           $(CIRCLE_STDLIB)/lib/libcirclenewlib.a \
-           $(CIRCLEHOME)/addon/fatfs/libfatfs.a \
-           $(CIRCLEHOME)/lib/usb/libusb.a \
-           $(CIRCLEHOME)/lib/input/libinput.a \
-           $(CIRCLEHOME)/lib/sched/libsched.a \
-           $(CIRCLEHOME)/addon/SDCard/libsdcard.a \
-           $(CIRCLEHOME)/lib/fs/libfs.a \
-           $(CIRCLEHOME)/lib/sound/libsound.a \
-           $(CIRCLEHOME)/addon/vc4/interface/bcm_host/libbcm_host.a \
-	  $(CIRCLEHOME)/addon/vc4/interface/khronos/libkhrn_client.a \
-	  $(CIRCLEHOME)/addon/vc4/interface/vmcs_host/libvmcs_host.a \
-	  $(CIRCLEHOME)/addon/vc4/interface/vcos/libvcos.a \
-	  $(CIRCLEHOME)/addon/vc4/vchiq/libvchiq.a \
-	  $(CIRCLEHOME)/addon/linux/liblinuxemu.a
+LIBS	=  $(CIRCLE_STDLIB)/install/arm-none-circle/lib/libm.a \
+           $(CIRCLE_STDLIB)/install/arm-none-circle/lib/libc.a \
+           $(CIRCLE_STDLIB)/install/arm-none-circle/lib/libz.a \
+           $(CIRCLE_STDLIB)/install/arm-none-circle/lib/libpng.a \
+           $(CIRCLE_STDLIB)/install/arm-none-circle/lib/libcirclenewlib.a \
+           $(CIRCLE_STDLIB)/libs/circle/lib/libcircle.a \
+           $(CIRCLE_STDLIB)/libs/circle/addon/fatfs/libfatfs.a \
+           $(CIRCLE_STDLIB)/libs/circle/lib/usb/libusb.a \
+           $(CIRCLE_STDLIB)/libs/circle/lib/input/libinput.a \
+           $(CIRCLE_STDLIB)/libs/circle/lib/sched/libsched.a \
+           $(CIRCLE_STDLIB)/libs/circle/addon/SDCard/libsdcard.a \
+           $(CIRCLE_STDLIB)/libs/circle/lib/fs/libfs.a \
+           $(CIRCLE_STDLIB)/libs/circle/lib/sound/libsound.a
 
 include $(CIRCLEHOME)/Rules.mk		
 

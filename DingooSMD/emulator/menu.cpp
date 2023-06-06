@@ -26,6 +26,11 @@ using namespace hw;
 
 ///////////////////////////////////////////////////////////////////////////////
 
+#define MENU_FONT_FILENAME   "font.ttf"
+#define MENU_IMG_LOGO_FILENAME  "logo.png"
+#define MENU_IMG_GAMEPAD_FILENAME  "gamepad.png"
+#define MENU_IMG_TILE_FILENAME  "tile.png"
+
 enum {
 	AM_VIDEO_SETS,
 	AM_SOUND_SETS,
@@ -92,14 +97,37 @@ static void	Menu_InputSets();
 static void	Menu_OtherSets();
 static void	Menu_About();
 
+gfx_font* emul::menu_load_font()
+{
+	char path[HW_MAX_PATH];
+	strcpy(path, fsys::getEmulPath());
+	fsys::combine(path, MENU_FONT_FILENAME);
+	debug::printf("menu font:%s\n", path);
+	return video::font_load(path, COLOR_BLACK, 16);
+}
+
 gfx_texture* emul::menu_load_logo()
 {
-	return video::tex_load(png_logo, png_logo_size);
+	char path[HW_MAX_PATH];
+	strcpy(path, fsys::getEmulPath());
+	fsys::combine(path, MENU_IMG_LOGO_FILENAME);
+	return video::tex_load(path);
 }
 
 gfx_texture* emul::menu_load_gamepad()
 {
-	return video::tex_load(png_gamepad, png_gamepad_size);
+	char path[HW_MAX_PATH];
+	strcpy(path, fsys::getEmulPath());
+	fsys::combine(path, MENU_IMG_GAMEPAD_FILENAME);
+	return video::tex_load(path);
+}
+
+gfx_texture* emul::menu_load_tile()
+{
+	char path[HW_MAX_PATH];
+	strcpy(path, fsys::getEmulPath());
+	fsys::combine(path, MENU_IMG_TILE_FILENAME);
+	return video::tex_load(path);
 }
 
 void emul::menu_lock_sets()

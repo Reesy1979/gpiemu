@@ -7,11 +7,11 @@
 # For conditions of distribution and use, see the disclaimer
 # and license in png.h
 
-TOOLCHAIN = $(GPITOOLCHAIN)
+TOOLCHAIN = $(CIRCLE_TOOLCHAIN)
 
 # Location of the zlib library and include files
-ZLIBINC = $(GPISDKINSTALL)/arm-none-circle/include
-ZLIBLIB = $(GPISDKINSTALL)/arm-none-circle/lib
+ZLIBINC = $(CIRCLE_STDLIB)/install/arm-none-circle/include
+ZLIBLIB = $(CIRCLE_STDLIB)/install/arm-none-circle/lib
 
 # Compiler, linker, lib and other tools
 CC = $(TOOLCHAIN)/bin/arm-none-eabi-gcc
@@ -46,7 +46,7 @@ all: static
 .c$(O):
 	$(CC) -c $(CFLAGS) -I$(ZLIBINC) $<
 
-static: libpng$(A) pngtest$(EXE)
+static: libpng$(A)
 
 shared:
 	@echo This is a generic makefile that cannot create shared libraries.
@@ -65,6 +65,12 @@ pngtest$(EXE): pngtest$(O) libpng$(A)
 
 clean:
 	$(RM_F) *$(O) libpng$(A) pngtest$(EXE) pngout.png
+
+install: png.h pngconf.h $(LIB)
+	-cp png.h $(CIRCLE_STDLIB)/install/arm-none-circle/include
+	-cp pngconf.h $(CIRCLE_STDLIB)/install/arm-none-circle/include
+	-cp pnglibconf.h $(CIRCLE_STDLIB)/install/arm-none-circle/include
+	-cp libpng$(A) $(CIRCLE_STDLIB)/install/arm-none-circle/lib
 
 png$(O):      png.h pngconf.h
 pngerror$(O): png.h pngconf.h

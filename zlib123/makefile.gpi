@@ -19,7 +19,7 @@ SFILES =
 # You shouldn't need to change anything below here, really
 ##############################################################################
 
-TOOLCHAIN = /home/dave/Toolchain/arm-gnu-toolchain-11.3.rel1-x86_64-arm-none-eabi
+TOOLCHAIN = $(CIRCLE_TOOLCHAIN)
 
 
 ALL_INCLUDES = -I$(TOOLCHAIN)/include $(INCLUDES)
@@ -36,6 +36,11 @@ CC = $(TOOLCHAIN)/bin/arm-none-eabi-gcc
 STRIP = $(TOOLCHAIN)/bin/arm-none-eabi-strip
 
 all:		$(PROGRAM).a
+
+install: zlib.h zconf.h $(LIB)
+	-cp zlib.h $(CIRCLE_STDLIB)/install/arm-none-circle/include
+	-cp zconf.h $(CIRCLE_STDLIB)/install/arm-none-circle/include
+	-cp $(PROGRAM).a $(CIRCLE_STDLIB)/install/arm-none-circle/lib
 
 clean:
 	-rm -f $(OFILES) $(MAPFILE) $(PROGRAM)
