@@ -28,18 +28,25 @@ Update the following file
 $(CIRCLE_STDLIB)/libs/circle/include/circle/sysconfig.h
 
 uncomment the following defines to enable PWM sound on the pi zero
+
 USE_PWM_AUDIO_ON_ZERO
+
 USE_GPIO18_FOR_LEFT_PWM_ON_ZERO
+
 USE_GPIO19_FOR_RIGHT_PWM_ON_ZERO
 
+
 and add a define for NO_USB_SOF_INTR - reduces USB overhead
+
 #define NO_USB_SOF_INTR
 
 Need to patch the libgloss io code to support file type properties in dirent.h.
+Need to patch some of the USB code as well as circle struggles to init the USB fully.
+
+See circle-patches folders
+copy files to correct location
 $(CIRCLE_STDLIB)/libs/circle-newlib/libgloss/circle/io.cpp
 $(CIRCLE_STDLIB)/libs/circle-newlib/newlib/libc/sys/circle/sys/dirent.h
-
-Need to patch some of the USB code as well as circle struggles to init the USB fully.
 $(CIRCLE_STDLIB)/libs/circle/lib/usb/dwhcidevice.cpp
 $(CIRCLE_STDLIB)/libs/circle/lib/usb/usbdevice.cpp
 
