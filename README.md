@@ -27,6 +27,9 @@ Need to configure Circle lib, we need to enable some additional settings.<br>
 Update the following file<br>
 $(CIRCLE_STDLIB)/libs/circle/include/circle/sysconfig.h<br>
 <br>
+Need to increase max kernel size otherwise NES emulator will halt on startup<br>
+#define KERNEL_MAX_SIZE		(3 * MEGABYTE)<br>
+<br>
 uncomment the following defines to enable PWM sound on the pi zero<br>
 <br>
 USE_PWM_AUDIO_ON_ZERO<br>
